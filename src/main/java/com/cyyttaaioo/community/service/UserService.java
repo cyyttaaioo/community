@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -81,6 +82,14 @@ public class UserService {
         user.setCreateTime(new Date());
         userMapper.insertUser(user);
 
+        // 激活邮件
+        Context context = new Context();
+        context.setVariable("email",user.getEmail());
+
+        //http://loaclhost:8080/community/activation/101/code     //user.getId()是springboot在执行userMapper.insertUser(user);后自动生成的，配置文件
+        String url = domain + contextPath + "/activation/" + user.getId()+ "/" +user.getActivationCode();
+        String content = templateEngine.process("/mail/activation",context);//激活页面的模板
+        mailClient.sendMail(user.getEmail(),"激活账号",content);
 
         return map;
     }
