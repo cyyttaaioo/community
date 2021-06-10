@@ -2,6 +2,7 @@ package com.cyyttaaioo.community.service;
 
 import com.cyyttaaioo.community.dao.UserMapper;
 import com.cyyttaaioo.community.entity.User;
+import com.cyyttaaioo.community.util.CommunityConstant;
 import com.cyyttaaioo.community.util.CommunityUtil;
 import com.cyyttaaioo.community.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Service
-public class UserService {
+public class UserService implements CommunityConstant {
 
     @Autowired
     private UserMapper userMapper;
@@ -76,7 +77,7 @@ public class UserService {
         user.setSalt(CommunityUtil.generateUUID().substring(0,5));//密码后的随机数
         user.setPassword(CommunityUtil.md5(user.getPassword()) + user.getSalt());//生成加密密码
         user.setType(0);
-        user.setStatus(0);
+        user.setStatus(0);//未激活账号的状态
         user.setActivationCode(CommunityUtil.generateUUID());//激活码
         user.setHeaderUrl(String.format("http://images.nowcoder.com/head/%dt.png",new Random().nextInt(1000)));
         user.setCreateTime(new Date());
@@ -88,9 +89,23 @@ public class UserService {
 
         //http://loaclhost:8080/community/activation/101/code     //user.getId()是springboot在执行userMapper.insertUser(user);后自动生成的，配置文件
         String url = domain + contextPath + "/activation/" + user.getId()+ "/" +user.getActivationCode();
+        context.setVariable("url", url);
         String content = templateEngine.process("/mail/activation",context);//激活页面的模板
         mailClient.sendMail(user.getEmail(),"激活账号",content);
 
         return map;
+    }
+
+    public int activation(int userId,String code){
+        User user = userMapper.selectById(userId);
+        if(user.getStatus() == 1){
+            return ACTIVATION_REPEAT;
+        }else if(user.getActivationCode().equals(code)){
+            userMapper.updateStatus(userId,1);
+            return ACTIVATION_SUCCESS;
+        }else{
+            return ACTIVATION_FAILURE;
+        }
+
     }
 }
