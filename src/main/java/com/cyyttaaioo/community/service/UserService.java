@@ -40,7 +40,7 @@ public class UserService implements CommunityConstant {
     @Value("${server.servlet.context-path}")
     private String contextPath;//项目名
 
-    public User findUserId(int id){
+    public User findUserById(int id){
         return userMapper.selectById(id);
     }
 
@@ -160,5 +160,8 @@ public class UserService implements CommunityConstant {
         loginTicketMapper.updateStatus(ticket,1);
     }
 
+    public LoginTicket findLoginTicket(String ticket){
+        return loginTicketMapper.selectByTicket(ticket);
+    }
 
 }
