@@ -1,18 +1,18 @@
 package com.cyyttaaioo.community.controller.interceptor;
 
-import com.cyyttaaioo.community.entity.LoginTicket;
-import com.cyyttaaioo.community.entity.User;
-import com.cyyttaaioo.community.service.UserService;
-import com.cyyttaaioo.community.util.CookieUtil;
-import com.cyyttaaioo.community.util.HostHolder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
+        import com.cyyttaaioo.community.entity.LoginTicket;
+        import com.cyyttaaioo.community.entity.User;
+        import com.cyyttaaioo.community.service.UserService;
+        import com.cyyttaaioo.community.util.CookieUtil;
+        import com.cyyttaaioo.community.util.HostHolder;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Component;
+        import org.springframework.web.servlet.HandlerInterceptor;
+        import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
+        import javax.servlet.http.HttpServletRequest;
+        import javax.servlet.http.HttpServletResponse;
+        import java.util.Date;
 
 @Component
 public class LoginTicketInterceptor implements HandlerInterceptor {
@@ -29,7 +29,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
         String ticket = CookieUtil.getValue(request, "ticket");
 
         if(ticket !=null){
-          //查询凭证
+            //查询凭证
             LoginTicket loginTicket = userService.findLoginTicket(ticket);
             //检查凭证是否有效
             if(loginTicket!=null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())){

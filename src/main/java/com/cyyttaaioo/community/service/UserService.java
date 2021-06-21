@@ -90,7 +90,7 @@ public class UserService implements CommunityConstant {
 
         // 激活邮件
         Context context = new Context();
-        context.setVariable("email",user.getEmail());
+        context.setVariable("username",user.getUsername());
 
         //http://loaclhost:8080/community/activation/101/code     //user.getId()是springboot在执行userMapper.insertUser(user);后自动生成的，配置文件
         String url = domain + contextPath + "/activation/" + user.getId()+ "/" +user.getActivationCode();
@@ -162,6 +162,10 @@ public class UserService implements CommunityConstant {
 
     public LoginTicket findLoginTicket(String ticket){
         return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    public int updateHeader(int userId,String headerUrl){
+        return userMapper.updateHeader(userId,headerUrl);
     }
 
 }
