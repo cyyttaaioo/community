@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -44,11 +46,13 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
+    //进入设置页面
     @RequestMapping(path = "/setting",method = RequestMethod.GET)
     public String getSettingPage(){
         return "/site/setting";
     }
 
+    //上传头像
     @RequestMapping(path = "/upload",method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model){
         if(headerImage == null){
@@ -81,7 +85,7 @@ public class UserController {
         userService.updateHeader(user.getId(),headderUrl);
         return "redirect:/index";
     }
-
+    //读取头像
     @RequestMapping(path = "/header/{fileName}", method = RequestMethod.GET)
     public void getHeader(@PathVariable("fileName") String fileName, HttpServletResponse response) {
         // 服务器存放路径
@@ -101,6 +105,24 @@ public class UserController {
             }
         } catch (IOException e) {
             logger.error("读取头像失败: " + e.getMessage());
+        }
+    }
+
+    //修改密码
+    @RequestMapping(path = "/updatePassword",method = RequestMethod.POST)
+    public String updatePassword(String oldPassword, String newPassword, @CookieValue("ticket") String ticket, Model model,User user){
+         user = hostHolder.getUser();
+        Map<String,Object> map = userService.updatePassword(user.getId(),oldPassword,newPassword);
+
+        if(map.containsKey("updateSuccess")){
+            userService.logout(ticket);
+            return "redirect:/login";
+        }else{
+            model.addAttribute("oldPass",oldPassword);
+            model.addAttribute("newPass",newPassword);
+            model.addAttribute("oldPassError",map.get("oldPassError"));
+            model.addAttribute("newPassError",map.get("newPassError"));
+            return "/site/setting";
         }
     }
 }
