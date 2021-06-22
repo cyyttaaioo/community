@@ -1,5 +1,6 @@
 package com.cyyttaaioo.community.controller;
 
+import com.cyyttaaioo.community.annotation.LoginRequired;
 import com.cyyttaaioo.community.entity.User;
 import com.cyyttaaioo.community.service.UserService;
 import com.cyyttaaioo.community.util.CommunityUtil;
@@ -47,12 +48,14 @@ public class UserController {
     private HostHolder hostHolder;
 
     //进入设置页面
+    @LoginRequired
     @RequestMapping(path = "/setting",method = RequestMethod.GET)
     public String getSettingPage(){
         return "/site/setting";
     }
 
     //上传头像
+    @LoginRequired
     @RequestMapping(path = "/upload",method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model){
         if(headerImage == null){
@@ -109,6 +112,7 @@ public class UserController {
     }
 
     //修改密码
+    @LoginRequired
     @RequestMapping(path = "/updatePassword",method = RequestMethod.POST)
     public String updatePassword(String oldPassword, String newPassword, @CookieValue("ticket") String ticket, Model model,User user){
          user = hostHolder.getUser();
