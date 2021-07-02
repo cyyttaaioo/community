@@ -37,7 +37,7 @@
     </insert>
 
     <select id="selectDiscussPostById" resultType="DiscussPost">
-        select <include refid="insertFields"></include>
+        select <include refid="selectFields"></include>
         from discuss_post
         where id = #{id}
     </select>
