@@ -181,7 +181,7 @@ public class UserService implements CommunityConstant {
              return map;
          }
          if(newPassword.equals(oldPassword)){
-             map.put("newPassError","新密码与原始密码相同");
+             map.put("newPassError","新密码与原始密码不能相同");
              return map;
          }
 
