@@ -8,6 +8,25 @@ function publish() {
 	//获取标题和内容
 	var title = $("#recipient-name").val();
 	var content = $("#message-text").val();
+	if(title.length == 0){
+		$("#hintBody").text("标题不能为空");
+		$("#hintModal").modal("show");
+		setTimeout(function(){
+			$("#hintModal").modal("hide");
+			$("#publishModal").modal("show");
+		}, 2000);
+		return;
+	}
+	if(content.length == 0){
+		$("#hintBody").text("内容不能为空");
+		$("#hintModal").modal("show");
+		setTimeout(function(){
+			$("#hintModal").modal("hide");
+			$("#publishModal").modal("show");
+		}, 2000);
+		return;
+	}
+
 	//发送异步请求（POST）
 	$.post(
 		CONTEXT_PATH + "/discuss/add",
