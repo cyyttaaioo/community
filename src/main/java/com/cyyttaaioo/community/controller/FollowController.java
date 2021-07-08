@@ -1,8 +1,10 @@
 package com.cyyttaaioo.community.controller;
 
 import com.cyyttaaioo.community.annotation.LoginRequired;
+import com.cyyttaaioo.community.entity.Event;
 import com.cyyttaaioo.community.entity.Page;
 import com.cyyttaaioo.community.entity.User;
+import com.cyyttaaioo.community.event.EventProducer;
 import com.cyyttaaioo.community.service.FollowService;
 import com.cyyttaaioo.community.service.UserService;
 import com.cyyttaaioo.community.util.CommunityConstant;
@@ -31,15 +33,27 @@ public class FollowController implements CommunityConstant{
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @LoginRequired
     @RequestMapping(path = "/follow", method = RequestMethod.POST)
     @ResponseBody
     public String follow(int entityType, int entityId){
-           User user = hostHolder.getUser();
+        User user = hostHolder.getUser();
 
-           followService.follow(user.getId(), entityType, entityId);
+        followService.follow(user.getId(), entityType, entityId);
 
-           return CommunityUtil.getJSONString(0, "已关注！");
+        //触发关注事件
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId);
+        eventProducer.fileEvent(event);
+
+        return CommunityUtil.getJSONString(0, "已关注！");
     }
 
     @LoginRequired
