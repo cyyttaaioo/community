@@ -1,9 +1,6 @@
 package com.cyyttaaioo.community.config;
 
-import com.cyyttaaioo.community.controller.interceptor.AlphaInterceptor;
-import com.cyyttaaioo.community.controller.interceptor.LoginRequiredInterceptor;
-import com.cyyttaaioo.community.controller.interceptor.LoginTicketInterceptor;
-import com.cyyttaaioo.community.controller.interceptor.MessageInterceptor;
+import com.cyyttaaioo.community.controller.interceptor.*;
 import com.cyyttaaioo.community.entity.LoginTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +22,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private MessageInterceptor messageInterceptor;
 
+    @Autowired
+    private DataInterceptor dataInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(alphaInterceptor)
@@ -39,6 +39,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //                .excludePathPatterns("/**/*.css","/**/*.js","/**/*.jpg","/**/*.png","/**/*.jpeg");
 
         registry.addInterceptor(messageInterceptor)
+                .excludePathPatterns("/**/*.css","/**/*.js","/**/*.jpg","/**/*.png","/**/*.jpeg");
+
+        registry.addInterceptor(dataInterceptor)
                 .excludePathPatterns("/**/*.css","/**/*.js","/**/*.jpg","/**/*.png","/**/*.jpeg");
     }
 
